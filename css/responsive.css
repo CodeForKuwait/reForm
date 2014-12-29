@@ -1,7 +1,10 @@
-  #gallery li {
-    width: 28.3333%;
-  }
-  
-  #gallery li:nth-child(4n) {
-    clear: left;
-  }
+@media (min-width: 480px) {
+
+	#gallery li {
+		width: 28.3333%;
+	}
+
+	#gallery li:nth-child(4n) {
+		clear: left;
+	}
+}
