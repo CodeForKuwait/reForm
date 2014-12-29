@@ -11,10 +11,11 @@ $.ajax({
             var $imageAnchor = $(this),
                 imageLink = $imageAnchor.attr("href"),
                 $image = $("<img>").attr('src', imageLink),
+                $caption = $("<p></p>").text(imageLink),
                 $li = $("<li></li>");
             
             $imageAnchor.text("");
-            $imageAnchor.append($image).append("<p>hi</p>");
+            $imageAnchor.append($image).append($caption);
             $li.append($imageAnchor);
             $("#gallery").append($li);
         });
