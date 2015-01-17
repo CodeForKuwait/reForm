@@ -19,37 +19,37 @@ $.ajax({
             $li.append($imageAnchor);
             $("#gallery").append($li);
             
+            var $overlay = $('<div id="overlay"></div>'),
+                $image = $("<img>");
+
+            //Add an image to overlay
+            $overlay.append($image);
+
+            //Add overlay
+            $("body").append($overlay);
+
+            //Capture the click event on a link to an image
+            $("#gallery a").click(function (event) {
+                "use strict";
+
+                event.preventDefault();
+
+                var imageLocation = $(this).attr("href");
+
+                //Update overlay with the image from the link
+                $image.attr("src", imageLocation);
+
+                //Show the overlay
+                $overlay.show();
+            }); // end click
+
+            //When overlay is clicked
+            $overlay.click(function () {
+                "use strict";
+                //Hide the overlay
+                $overlay.hide();
+            }); //end click
+            
         }); //end success 
     }
 }); //end .ajax
-
-var $overlay = $('<div id="overlay"></div>'),
-    $image = $("<img>");
-
-//Add an image to overlay
-$overlay.append($image);
-
-//Add overlay
-$("body").append($overlay);
-
-//Capture the click event on a link to an image
-$("#gallery a").click(function (event) {
-    "use strict";
-
-    event.preventDefault();
-
-    var imageLocation = $(this).attr("href");
-
-    //Update overlay with the image from the link
-    $image.attr("src", imageLocation);
-
-    //Show the overlay
-    $overlay.show();
-}); // end click
-
-//When overlay is clicked
-$overlay.click(function () {
-    "use strict";
-    //Hide the overlay
-    $overlay.hide();
-}); //end click
