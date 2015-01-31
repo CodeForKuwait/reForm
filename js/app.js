@@ -9,7 +9,7 @@ $.ajax({
         images.each(function () {
 
             var $imageAnchor = $(this),
-                imageLink = $imageAnchor.attr("href"),
+                imageLink = "img/" + $imageAnchor.attr("href"),
                 $image = $("<img>").attr('src', imageLink),
                 $caption = $("<p></p>").text(imageLink),
                 $li = $("<li></li>");
@@ -34,7 +34,7 @@ $.ajax({
 
                 event.preventDefault();
 
-                var imageLocation = $(this).attr("href");
+                var imageLocation = "img/" + $(this).attr("href");
 
                 //Update overlay with the image from the link
                 $image.attr("src", imageLocation);
