@@ -6,12 +6,20 @@
 var $overlay = $('<div id="overlay"></div>');
 var $image = $("<img>");
 var $caption = $("<p></p>");
+var $closeButton = $('<a href="#" id="close" class="myButton">close</a>')
+var $saveButton = $('<a href="#" id="save" class="myButton">save</a>')
 
 //Add an image to overlay
 $overlay.append($image);
 
 //Add a caption to overlay
 $overlay.append($caption);
+
+//Add close button to overlay
+$overlay.append($closeButton);
+
+//Add save button to overlay
+$overlay.append($saveButton);
 
 //Add overlay
 $("body").append($overlay);
@@ -36,7 +44,7 @@ $("#gallery a").click(function (event) {
 });
 
 //When overlay is clicked
-$overlay.click(function () {
+$closeButton.click(function () {
     "use strict";
     //Hide the overlay
     $overlay.hide();
