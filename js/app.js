@@ -3,20 +3,29 @@
 //Problem: User when clicking on image, goes to a dead end
 //Solution: Create an overlay with the large image - Lightbox
 
+var CANVAS_WIDTH = 2480;
+var CANVAS_HEIGHT = 3508;
+var CANVAS_LINE_WIDTH = 5;
+
 var $overlay = $('<div id="overlay"></div>');
 //var $image = $("<img>");
-var $canvas = $('<canvas id="formCanvas" width="2480" height="3508"></canvas>')
+var $canvas = $('<canvas id="formCanvas" width="' + CANVAS_WIDTH + '" height="' + CANVAS_HEIGHT + '"></canvas>');
 var $caption = $("<p></p>");
-var $closeButton = $('<a href="#" id="close" class="myButton">close</a>')
-var $saveButton = $('<a href="#" id="save" class="myButton">save</a>')
+var $closeButton = $('<a href="#" id="close" class="myButton">close</a>');
+var $saveButton = $('<a href="#" id="save" class="myButton">save</a>');
 
 var ctx = $canvas[0].getContext("2d");
 var lastEvent;
 var mouseDown = false;
+var canvasScaleWidth;
+var canvasScaleHeight;
 
-
-////Add an hidden image to overlay
-//$overlay.append($image);
+var canvasRescale = function(){
+  canvasScaleWidth = CANVAS_WIDTH/$canvas.width();
+  canvasScaleHeight = CANVAS_HEIGHT/$canvas.height();
+  
+  console.log(canvasScaleHeight, canvasScaleWidth);
+}
 
 //Add canvas to overlay
 $overlay.append($canvas);
@@ -43,19 +52,25 @@ $("#gallery a").click(function (event) {
         captionText = $(this).children("img").attr("alt");
     
     //Update overlay with the image from the link
-//    $image.attr("src", imageLocation);
     var image = new Image();
+    image.addEventListener("load", function() {
+      //Draw the image on the canvas
+      ctx.drawImage(image, 0, 0);
+    }, false);//end addEventListener
     image.src = imageLocation;
     
     //Set caption
     $caption.text(captionText);
     
-    //Draw the image on the canvas
-    ctx.drawImage(image, 0, 0);
   
     //Show the overlay
     $overlay.show();
+  
+    canvasRescale();
 });
+
+//Rescale the canvas coordinates if the window is resized
+$(window).resize(canvasRescale);//end resize
 
 //When close button is clicked
 $closeButton.click(function () {
@@ -71,14 +86,19 @@ $canvas.mousedown(function (e) {
     mouseDown = true;
 }).mousemove(function (e) {
     "use strict";
+  
     //draw lines
     if (mouseDown) {
-        ctx.beginPath();
-        ctx.moveTo(lastEvent.offsetX, lastEvent.offsetY);
-        ctx.lineTo(e.offsetX, e.offsetY);
-        ctx.strokeStyle = "black";
-        ctx.stroke();
-        lastEvent = e;
+      ctx.save();
+      ctx.scale(canvasScaleWidth, canvasScaleHeight)
+      ctx.beginPath();
+      ctx.moveTo(lastEvent.offsetX, lastEvent.offsetY);
+      ctx.lineTo(e.offsetX, e.offsetY);
+      ctx.lineWidth = CANVAS_LINE_WIDTH/canvasScaleWidth;
+      ctx.strokeStyle = "black";
+      ctx.stroke();
+      ctx.restore();
+      lastEvent = e;
     }
 }).mouseup(function () {
     "use strict";
