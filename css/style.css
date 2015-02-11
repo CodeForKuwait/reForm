@@ -11,6 +11,13 @@ a {
 	text-decoration: none;
 }
 
+canvas {
+  background: #fff;
+  display: block;
+  margin: 10% auto;
+  max-width: 80%;
+}
+
 #gallery li img {
     max-width: 90%;
     margin: 5%;
@@ -49,10 +56,13 @@ a {
   text-align:center;
 }
 
+/*
 #overlay img {
   margin-top: 10%;
   max-width: 80%;
+  display: none;
 }
+*/
 
 #overlay p {
  color:white; 
