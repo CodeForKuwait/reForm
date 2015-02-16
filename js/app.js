@@ -11,24 +11,38 @@ var $overlay = $('<div id="overlay"></div>');
 //var $image = $("<img>");
 var $canvas = $('<canvas id="formCanvas" width="' + CANVAS_WIDTH + '" height="' + CANVAS_HEIGHT + '"></canvas>');
 var $caption = $("<p></p>");
+var $textInput = $('<input id="form-adder" type="text" autofocus>');
+
 var $closeButton = $('<a href="#" id="close" class="myButton">close</a>');
 var $saveButton = $('<a href="#" id="save" class="myButton">save</a>');
 
+//var lastEvent;
+//var mouseDown = false;
+var textLocationX;
+var textLocationY;
+
 var ctx = $canvas[0].getContext("2d");
-var lastEvent;
-var mouseDown = false;
 var canvasScaleWidth;
 var canvasScaleHeight;
 
-var canvasRescale = function(){
-  canvasScaleWidth = CANVAS_WIDTH/$canvas.width();
-  canvasScaleHeight = CANVAS_HEIGHT/$canvas.height();
+var canvasRescale = function () {
+  "use strict";
   
-  console.log(canvasScaleHeight, canvasScaleWidth);
-}
+  canvasScaleWidth = CANVAS_WIDTH / $canvas.width();
+  canvasScaleHeight = CANVAS_HEIGHT / $canvas.height();
+};
+
+var setImageURL = function () {
+  var dataURL = $canvas[0].toDataURL("image/jpeg", 0.1);
+  $saveButton.attr("download", $caption.text() + ".jpeg");
+  $saveButton.attr("href", dataURL);
+};
 
 //Add canvas to overlay
 $overlay.append($canvas);
+
+//Add text input
+$overlay.append($textInput);
 
 //Add a caption to overlay
 $overlay.append($caption);
@@ -44,65 +58,75 @@ $("body").append($overlay);
 
 //Capture the click event on a link to an image
 $("#gallery a").click(function (event) {
-    "use strict";
-    
-    event.preventDefault();
-    
-    var imageLocation = $(this).attr("href"),
-        captionText = $(this).children("img").attr("alt");
-    
-    //Update overlay with the image from the link
-    var image = new Image();
-    image.addEventListener("load", function() {
-      //Draw the image on the canvas
-      ctx.drawImage(image, 0, 0);
-    }, false);//end addEventListener
-    image.src = imageLocation;
-    
-    //Set caption
-    $caption.text(captionText);
-    
-  
-    //Show the overlay
-    $overlay.show();
-  
-    canvasRescale();
+  "use strict";
+
+  event.preventDefault();
+
+  var imageLocation = $(this).attr("href"),
+    captionText = $(this).children("img").attr("alt");
+
+  //Update overlay with the image from the link
+  var image = new Image();
+  image.addEventListener("load", function () {
+    //Draw the image on the canvas
+    ctx.drawImage(image, 0, 0);
+    setImageURL();
+  }, false);//end addEventListener
+  image.src = imageLocation;
+
+  //Set caption
+  $caption.text(captionText);
+
+
+  //Show the overlay
+  $overlay.show();
+
+  canvasRescale();
 });
 
 //Rescale the canvas coordinates if the window is resized
 $(window).resize(canvasRescale);//end resize
 
+$textInput.keypress(function (e) {
+  "use strict";
+  
+  var key = e.which;
+  
+  //If the enter key is pressed
+  if (key === 13) {
+    
+    //Add the text from the text box to the canvas
+    ctx.save();
+    ctx.scale(canvasScaleWidth, canvasScaleHeight);
+    ctx.fillText($textInput.val(), textLocationX, textLocationY + $textInput.height() / 2);
+    ctx.restore();
+    
+    //Update the image data URI
+    setImageURL();
+    
+    //Reset and hide the text box
+    $textInput.val('');
+    $textInput.hide();
+  }
+});//end keypress
+
 //When close button is clicked
 $closeButton.click(function () {
-    "use strict";
-    //Hide the overlay
-    $overlay.hide();
+  "use strict";
+  //Hide the overlay
+  $overlay.hide();
 });
 
-//On mouse events on the canvas
-$canvas.mousedown(function (e) {
-    "use strict";
-    lastEvent = e;
-    mouseDown = true;
-}).mousemove(function (e) {
-    "use strict";
+//On click events on the canvas
+$canvas.click(function (e) {
+  "use strict";
   
-    //draw lines
-    if (mouseDown) {
-      ctx.save();
-      ctx.scale(canvasScaleWidth, canvasScaleHeight)
-      ctx.beginPath();
-      ctx.moveTo(lastEvent.offsetX, lastEvent.offsetY);
-      ctx.lineTo(e.offsetX, e.offsetY);
-      ctx.lineWidth = CANVAS_LINE_WIDTH/canvasScaleWidth;
-      ctx.strokeStyle = "black";
-      ctx.stroke();
-      ctx.restore();
-      lastEvent = e;
-    }
-}).mouseup(function () {
-    "use strict";
-    mouseDown = false;
-}).mouseleave(function () {
-    $canvas.mouseup();
+  textLocationX = e.offsetX - $textInput.width() / 2;
+  textLocationY = e.offsetY - $textInput.height() / 2;
+  
+  //Overlay the text input on the click location
+  $textInput.show();
+  $textInput.offset({"top": $canvas.offset().left + textLocationY,
+                     "left": $canvas.offset().top + textLocationX});
+  $textInput.val('').focus();
 });
