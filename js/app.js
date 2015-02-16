@@ -110,6 +110,15 @@ $textInput.keypress(function (e) {
   }
 });//end keypress
 
+//When save button is clicked
+$saveButton.click(function () {
+  "use strict";
+  
+  //The image will be automatically downloaded
+  //so just trigger the close button
+  $closeButton.click();
+});
+
 //When close button is clicked
 $closeButton.click(function () {
   "use strict";
