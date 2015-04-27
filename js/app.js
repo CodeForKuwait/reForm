@@ -25,6 +25,29 @@ var ctx = $canvas[0].getContext("2d");
 var canvasScaleWidth;
 var canvasScaleHeight;
 
+/**
+ * Function to "Draw" text on form
+ * Picks up form element id, returns drawing context of the canvas and fills the text
+ * 
+ * https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Drawing_text
+ * 
+ * Usage: drawText("Test", 10, 90)
+ * 
+ * Enable fonts by, for example, adding to function: ctx.font = "30px Verdana";
+ * 
+ * @param {Object} $textInput
+ * @param {Object} textLocationX
+ * @param {Object} textLocationY
+ */
+
+var drawText = function($textInput, textLocationX, textLocationY) 
+{
+	c = document.getElementById("formCanvas");
+	var ctx = c.getContext("2d");
+	ctx.fillText($textInput, textLocationX, textLocationY);
+};
+
+
 var canvasRescale = function () {
   "use strict";
   
@@ -37,6 +60,8 @@ var setImageURL = function () {
   $saveButton.attr("download", $caption.text() + ".jpeg");
   $saveButton.attr("href", dataURL);
 };
+
+
 
 //Add canvas to overlay
 $overlay.append($canvas);
